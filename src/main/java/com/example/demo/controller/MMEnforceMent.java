@@ -1,12 +1,11 @@
 package com.example.demo.controller;
 
 
-import com.example.demo.Utility;
-import com.example.demo.models.MMEnforceMentData;
+import com.example.demo.repository.MMEnforcementEntityRepository;
+import com.example.demo.utilities.Utility;
 import com.example.demo.models.MMEnforceMentEntity;
 import com.example.demo.models.ResponseWrapper;
 import com.example.demo.services.MMEnforcementService;
-import com.example.demo.services.MMEnforcementServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -16,8 +15,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/demo")
 public class MMEnforceMent {
 
+//    @Autowired
+//    MMEnforcementService mmEnforcementService;
     @Autowired
-    MMEnforcementService mmEnforcementService;
+    MMEnforcementEntityRepository mmEnforcementEntityRepository;
 
     @RequestMapping(value="/submitEnforceMent" , method = RequestMethod.POST)
     @ResponseBody
@@ -28,15 +29,16 @@ public class MMEnforceMent {
         mmEnforceMentEntity.setComplaintId(complaintID);
         mmEnforceMentEntity.setStatuCode("Accepted");
 
-        String returnMsg = mmEnforcementService.saveEnforcementData(mmEnforceMentEntity);
-
-        if(returnMsg == "Success"){
+        try{
+            mmEnforcementEntityRepository.save(mmEnforceMentEntity);
             responseWrapper.setStatusMsg("Success");
             responseWrapper.setComplaintId(complaintID);
             responseWrapper.setStatusCode("Accepted");
-        }else{
+        }catch(Exception e){
             responseWrapper.setStatusMsg("Fail");
         }
+
+
 
         return responseWrapper ;
     }
@@ -47,7 +49,7 @@ public class MMEnforceMent {
 
         ResponseWrapper responseWrapper = new ResponseWrapper();
 
-        MMEnforceMentEntity mmEnforceMentEntity1 = mmEnforcementService.getEnforcementStatus(mmEnforceMentEntity);
+        MMEnforceMentEntity mmEnforceMentEntity1 = mmEnforcementEntityRepository.findByComplaintId(mmEnforceMentEntity.getComplaintId());
         if(mmEnforceMentEntity1 != null){
             responseWrapper.setStatusMsg("Success");
             responseWrapper.setStatusMsg(mmEnforceMentEntity.getComplaintId());
