@@ -9,7 +9,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 
-@EnableAutoConfiguration
 @SpringBootApplication
 public class DemoApplication {
 	public static void main(String[] args) {
